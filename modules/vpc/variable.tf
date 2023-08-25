@@ -40,6 +40,8 @@ variable "private_ip_for_nat_gateway" {
 
 }
 
-variable "vpc_id" {
-  
+variable "craete_private_subnet" {
+  type = bool
+  default =false
 }
+

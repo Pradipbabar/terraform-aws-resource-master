@@ -15,15 +15,15 @@ output "public_subnet_1b_id" {
 }
 
 output "private_subnet_1a_id" {
-  value = aws_subnet.private-subnet-1a.id
+  value = aws_subnet.private-subnet-1a[*].id
 }
 
 output "private_subnet_1b_id" {
-  value = aws_subnet.private-subnet-1b.id
+  value = aws_subnet.private-subnet-1b[*].id
 }
 
 output "private_subnets" {
-  value = tolist([aws_subnet.private-subnet-1a.id, aws_subnet.private-subnet-1b.id])
+  value = tolist([aws_subnet.private-subnet-1a[*].id, aws_subnet.private-subnet-1b[*].id])
 }
 
 output "public_subnets" {

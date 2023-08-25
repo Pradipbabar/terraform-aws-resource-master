@@ -30,6 +30,7 @@ resource "aws_subnet" "public-subnet-1b" {
 
 # Private Subnet Creation
 resource "aws_subnet" "private-subnet-1a" {
+    count = var.craete_private_subnet ? 1 : 0
     vpc_id              = aws_vpc.main.id
     cidr_block          = var.private_subnet_1a_cidr_block
     availability_zone   = "us-east-1a"
@@ -39,6 +40,7 @@ resource "aws_subnet" "private-subnet-1a" {
 }
 
 resource "aws_subnet" "private-subnet-1b" {
+    count = var.craete_private_subnet ? 1 : 0
     vpc_id              = aws_vpc.main.id
     cidr_block          = var.private_subnet_1b_cidr_block
     availability_zone   = "us-east-1b"
@@ -60,6 +62,7 @@ resource "aws_route_table" "public-route-table" {
 
 # Route Table Creation - Private
 resource "aws_route_table" "private-route-table" {
+    count = var.craete_private_subnet ? 1 : 0
     vpc_id = aws_vpc.main.id
 
     tags = {
@@ -82,18 +85,21 @@ resource "aws_route_table_association" "public-subnet-1b" {
 # Route Table Association - Private
 
 resource "aws_route_table_association" "private-subnet-1a" {
-    subnet_id       = aws_subnet.private-subnet-1a.id
-    route_table_id  = aws_route_table.private-route-table.id
+    count = var.craete_private_subnet ? 1 : 0
+    subnet_id       = aws_subnet.private-subnet-1a[0].id
+    route_table_id  = aws_route_table.private-route-table[0].id
 }
 
 resource "aws_route_table_association" "private-subnet-1b" {
-    subnet_id       = aws_subnet.private-subnet-1b.id
-    route_table_id  = aws_route_table.private-route-table.id
+    count = var.craete_private_subnet ? 1 : 0
+    subnet_id       = aws_subnet.private-subnet-1b[0].id
+    route_table_id  = aws_route_table.private-route-table[0].id
 }
 
 # Elastic IP for NAT Gateway
 resource "aws_eip" "elastic-ip-for-nat-gateway" {
-    vpc                         = true
+    count = var.craete_private_subnet ? 1 : 0
+    domain                         = "vpc"
     associate_with_private_ip   = var.private_ip_for_nat_gateway
 
     tags = {
@@ -103,7 +109,8 @@ resource "aws_eip" "elastic-ip-for-nat-gateway" {
 
 # Nat Gateway creation
 resource "aws_nat_gateway" "nat-gw" {
-    allocation_id   = aws_eip.elastic-ip-for-nat-gateway.id
+    count = var.craete_private_subnet ? 1 : 0
+    allocation_id   = aws_eip.elastic-ip-for-nat-gateway[0].id
     subnet_id       = aws_subnet.public-subnet-1a.id
 
     tags = {
@@ -127,8 +134,9 @@ resource "aws_internet_gateway" "main-igw" {
 # Nat Gateway & route table association [ private route]
 
 resource "aws_route" "nat-gw-route" {
-    route_table_id          = aws_route_table.private-route-table.id
-    nat_gateway_id          = aws_nat_gateway.nat-gw.id
+    count = var.craete_private_subnet ? 1 : 0
+    route_table_id          = aws_route_table.private-route-table[0].id
+    nat_gateway_id          = aws_nat_gateway.nat-gw[0].id
     destination_cidr_block  = "0.0.0.0/0"
 }
 
