@@ -45,3 +45,7 @@ variable "craete_private_subnet" {
   default =false
 }
 
+variable "existing_vpc_id" {
+  description = "existing vpc id "
+  default = ""
+}

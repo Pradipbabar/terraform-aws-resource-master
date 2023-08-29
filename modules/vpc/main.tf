@@ -9,7 +9,7 @@ resource "aws_vpc" "main" {
 
 # Public Subnet Creation
 resource "aws_subnet" "public-subnet-1a" {
-    vpc_id              = aws_vpc.main.id
+    vpc_id              = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
     cidr_block          = var.public_subnet_1a_cidr_block
     availability_zone   = "us-east-1a"
     
@@ -20,7 +20,7 @@ resource "aws_subnet" "public-subnet-1a" {
 }
 
 resource "aws_subnet" "public-subnet-1b" {
-    vpc_id              = aws_vpc.main.id
+    vpc_id              = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
     cidr_block          = var.public_subnet_1b_cidr_block
     availability_zone   = "us-east-1b"
     tags = {
@@ -31,7 +31,7 @@ resource "aws_subnet" "public-subnet-1b" {
 # Private Subnet Creation
 resource "aws_subnet" "private-subnet-1a" {
     count = var.craete_private_subnet ? 1 : 0
-    vpc_id              = aws_vpc.main.id
+    vpc_id              = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
     cidr_block          = var.private_subnet_1a_cidr_block
     availability_zone   = "us-east-1a"
     tags = {
@@ -41,7 +41,7 @@ resource "aws_subnet" "private-subnet-1a" {
 
 resource "aws_subnet" "private-subnet-1b" {
     count = var.craete_private_subnet ? 1 : 0
-    vpc_id              = aws_vpc.main.id
+    vpc_id              = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
     cidr_block          = var.private_subnet_1b_cidr_block
     availability_zone   = "us-east-1b"
 
@@ -53,7 +53,7 @@ resource "aws_subnet" "private-subnet-1b" {
 
 # Route Table Creation - Public 
 resource "aws_route_table" "public-route-table" {
-    vpc_id = aws_vpc.main.id
+    vpc_id = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
 
     tags = {
       Name = "${var.environment}-public-route-table"
@@ -63,7 +63,7 @@ resource "aws_route_table" "public-route-table" {
 # Route Table Creation - Private
 resource "aws_route_table" "private-route-table" {
     count = var.craete_private_subnet ? 1 : 0
-    vpc_id = aws_vpc.main.id
+    vpc_id = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
 
     tags = {
       Name = "${var.environment}-private-route-table"
@@ -123,7 +123,7 @@ resource "aws_nat_gateway" "nat-gw" {
 # Internet Gateway Creation
 
 resource "aws_internet_gateway" "main-igw" {
-    vpc_id = aws_vpc.main.id
+    vpc_id = var.existing_vpc_id != "" ? var.existing_vpc_id : aws_vpc.main.id
 
     tags = {
       Name = "${var.environment}-IGW"
