@@ -55,7 +55,7 @@ variable "final_snapshot_identifier" {
 
 variable "subnet_ids" {
   description = "subnet ids for database subnet group"
-  default = ""
+  default = []
 }
 
 variable "environment" {
