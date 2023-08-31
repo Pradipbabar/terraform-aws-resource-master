@@ -1,19 +1,18 @@
-name: Issue Autoresponse
+name: 'Welcome New Contributors'
 
 on:
   issues:
     types: [opened]
+  pull_request_target:
+    types: [opened]
 
 jobs:
-  auto-response:
+  welcome-new-contributor:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: derekprior/add-autoresponse@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        respondableId: ${{ github.event.issue.node_id }}
-        response: "thank you for open issue ${{github.event.issue.user.login }}"
-        author: ${{ github.event.issue.user.login }}
-        exemptedAuthors: "johnsmith, janedoe"
+      - name: 'Greet the contributor'
+        uses: garg3133/welcome-new-contributors@v1.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: 'Hello there, thanks for opening your first issue here. We welcome you to the #90DaysOfDevOps community!'
+          pr-message: 'Hello there, thanks for opening your first Pull Request. Someone will review it soon. Welcome to the #90DaysOfDevOps community!'
