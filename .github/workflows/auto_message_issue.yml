@@ -1,16 +1,19 @@
-name: Auto message on Creating a Issue.
+name: Issue Autoresponse
 
 on:
   issues:
     types: [opened]
 
 jobs:
-  greeting:
+  auto-response:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Create comment for issue
-      if: github.event_name =='issues'
-      uses: peter-evans/create-or-update-comment@v1
+    - uses: derekprior/add-autoresponse@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        issue-number: ${{tojson(github.event.issue.number)}}
-        body: Hello there!👋, @${{ github.actor }} Welcome to the terraform-aws-resource-master! 🚀⚡Thank you and Congratulations🎉 for opening a issue in this project. Please make sure not to start working on this issue, unless you are assigned to it.😄
+        respondableId: ${{ github.event.issue.node_id }}
+        response: "thank you for open issue ${{github.event.issue.user.login }}"
+        author: ${{ github.event.issue.user.login }}
+        exemptedAuthors: "johnsmith, janedoe"
