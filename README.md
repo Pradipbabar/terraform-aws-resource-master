@@ -1,122 +1,118 @@
-# Terraform Main Module: MyInfrastructure
+# Terraform Main Module: My AWS Infrastructure
 
-This Terraform main module orchestrates the deployment of various AWS resources using submodules. It provides a comprehensive infrastructure setup for managing Amazon Virtual Private Cloud (VPC), security groups, Amazon S3 buckets, Amazon RDS databases, and Amazon EC2 instances. Below, you'll find detailed information on how to use this main module.
+This Terraform main module orchestrates the deployment of various AWS resources by leveraging the capabilities of submodules. The main module is designed to create and manage a wide range of AWS resources, including a VPC, EC2 instances, RDS databases, Amazon S3 buckets, security groups, and more. Additionally, it uses submodules for specific resource types such as CloudWatch alarms and DynamoDB tables.
+
+## Prerequisites
+
+Before you begin, ensure that you have the following prerequisites set up:
+
+- AWS account with appropriate permissions.
+- Terraform installed on your local machine.
+- AWS CLI configured with valid credentials.
 
 ## Usage
 
-```hcl
-module "my_infrastructure" {
-  source = "pradipbabar/my-infrastructure/aws"
+### 1. Clone the Repository
 
-  # Input variables for submodules
-  vpc_config         = module.vpc.vpc_config
-  security_group_ids = [module.security_groups.ec2_security_group_id]
-  s3_config          = module.s3.s3_config
-  rds_config         = module.rds.rds_config
-  ec2_config         = module.ec2.ec2_config
-}
+Clone this repository to your local machine:
+
+```bash
+git clone https://github.com/your/repo.git
+cd repo
 ```
 
-## Inputs
+### 2. Define Your Configuration
 
-### VPC Configuration (from `vpc` submodule)
+Create a Terraform configuration file (e.g., `main.tf`) to define your infrastructure configuration. In this file, you can specify the resources you want to create and configure.
 
-| Name                | Description                                | Type   | Default     | Required |
-| ------------------- | ------------------------------------------ | ------ | ----------- | :------: |
-| vpc_config          | Configuration settings for the VPC.       | object |             |   yes    |
+```hcl
+module "my_vpc" {
+  source = "pradipbabar/resource-master/aws-vpc"
 
-### Security Groups Configuration (from `security_groups` submodule)
+  # VPC configuration here...
+}
 
-| Name                | Description                                | Type   | Default     | Required |
-| ------------------- | ------------------------------------------ | ------ | ----------- | :------: |
-| security_group_ids  | List of security group IDs.                | list(string) | [] |   yes    |
+module "my_ec2_instances" {
+  source = "pradipbabar/resource-master/aws-ec2"
 
-### S3 Configuration (from `s3` submodule)
+  # EC2 instances configuration here...
+}
 
-| Name                | Description                                | Type   | Default     | Required |
-| ------------------- | ------------------------------------------ | ------ | ----------- | :------: |
-| s3_config           | Configuration settings for S3 buckets.     | object |             |   yes    |
+module "my_rds_instance" {
+  source = "pradipbabar/resource-master/aws-rds"
 
-### RDS Configuration (from `rds` submodule)
+  # RDS instance configuration here...
+}
 
-| Name                | Description                                | Type   | Default     | Required |
-| ------------------- | ------------------------------------------ | ------ | ----------- | :------: |
-| rds_config          | Configuration settings for RDS instances. | object |             |   yes    |
+module "my_s3_bucket" {
+  source = "pradipbabar/resource-master/aws-s3"
 
-### EC2 Configuration (from `ec2` submodule)
+  # S3 bucket configuration here...
+}
 
-| Name                | Description                                | Type   | Default     | Required |
-| ------------------- | ------------------------------------------ | ------ | ----------- | :------: |
-| ec2_config          | Configuration settings for EC2 instances. | object |             |   yes    |
+# Additional modules for CloudWatch, DynamoDB, etc.
+```
 
-## Outputs
+### 3. Initialize Terraform
 
-The main module does not provide any outputs directly. However, you can access the outputs from the submodules used within this main module.
+Run the following command to initialize Terraform and download the required providers and modules:
 
-### VPC Configuration (from `vpc` submodule)
+```bash
+terraform init
+```
 
-| Name                | Description                             |
-| ------------------- | --------------------------------------- |
-| vpc_id              | The ID of the VPC.                      |
-| public_subnets      | List of public subnet IDs.              |
-| private_subnets     | List of private subnet IDs.             |
-| nat_gateway_id      | ID of the NAT Gateway (if created).    |
-| internet_gateway_id | ID of the Internet Gateway.             |
-| public_route_table_id | ID of the public route table.        |
-| private_route_table_id | ID of the private route table (if created). |
+### 4. Apply the Configuration
 
-### Security Groups Configuration (from `security_groups` submodule)
+Deploy your AWS infrastructure by running:
 
-| Name                | Description                             |
-| ------------------- | --------------------------------------- |
-| ec2_security_group_id | ID of the EC2 security group.         |
+```bash
+terraform apply
+```
 
-### S3 Configuration (from `s3` submodule)
+Terraform will show you the plan and ask for confirmation before applying the changes.
 
-| Name                | Description                             |
-| ------------------- | --------------------------------------- |
-| s3_bucket_ids       | List of S3 bucket IDs.                  |
+### 5. Destroy Resources (Optional)
 
-### RDS Configuration (from `rds` submodule)
+If you need to tear down the resources, you can use the following command:
 
-| Name                | Description                             |
-| ------------------- | --------------------------------------- |
-| rds_instance_ids    | List of RDS instance IDs.               |
-| rds_instance_endpoints | List of RDS instance endpoints.     |
-
-### EC2 Configuration (from `ec2` submodule)
-
-| Name                | Description                             |
-| ------------------- | --------------------------------------- |
-| ec2_instance_ids    | List of EC2 instance IDs.               |
-| ec2_instance_private_ips | List of private IP addresses for the EC2 instances. |
-| ec2_instance_public_ips  | List of public IP addresses for the EC2 instances. |
+```bash
+terraform destroy
+```
 
 ## Submodules
 
-### VPC Configuration (`vpc` submodule)
+### AWS VPC (Virtual Private Cloud)
 
-The `vpc` submodule deploys an Amazon Virtual Private Cloud (VPC) with public and private subnets, route tables, NAT Gateway, Internet Gateway, and more.
+The `aws-vpc` submodule creates a Virtual Private Cloud in AWS, including public and private subnets, route tables, and necessary associations.
 
-### Security Groups Configuration (`security_groups` submodule)
+### AWS EC2 Instances
 
-The `security_groups` submodule creates security groups that can be associated with EC2 instances or other AWS resources.
+The `aws-ec2` submodule deploys Amazon EC2 instances in the VPC with configurable attributes such as instance types, AMIs, security groups, and more.
 
-### S3 Configuration (`s3` submodule)
+### AWS RDS (Relational Database Service)
 
-The `s3` submodule provisions Amazon S3 buckets with various configurations, including ACL, versioning, website settings, CORS rules, server-side encryption, and object lock settings.
+The `aws-rds` submodule provisions Amazon RDS database instances with customizable settings, including engine, storage, instance class, and more.
 
-### RDS Configuration (`rds` submodule)
+### AWS S3 Buckets
 
-The `rds` submodule deploys Amazon RDS database instances with customizable settings, including engine, storage, instance class, database name, and more.
+The `aws-s3` submodule manages Amazon S3 buckets, allowing you to create primary and log buckets with various configurations.
 
-### EC2 Configuration (`ec2` submodule)
+### Additional Submodules
 
-The `ec2` submodule launches Amazon EC2 instances with options for instance type, AMI, subnet, security groups, key pairs, and more.
+Extend the main module by adding additional submodules to create and manage resources like CloudWatch alarms, DynamoDB tables, Lambda functions, etc., according to your specific requirements.
 
-## Notes
+## Outputs
 
-- This main module allows you to orchestrate the deployment of various AWS resources using the submodules provided.
-- Customize the input variables according to your specific infrastructure requirements.
-- Ensure that you have the necessary AWS credentials and authentication configured for Terraform to create and manage resources in your AWS account.
-- The outputs provided by the main module are based on the outputs exposed by the submodules used within it. Refer to the specific submodule documentation for more details on their outputs and configuration options.
+Each submodule may have its own set of outputs that you can use in your main configuration or other submodules. Refer to the specific submodule's documentation for details on available outputs.
+
+## Contributing
+
+Feel free to contribute to this Terraform infrastructure module by creating pull requests, reporting issues, or suggesting improvements. Your contributions are highly appreciated!
+
+## License
+
+This Terraform module is open-source and available under the [MIT License](LICENSE).
+
+---
+
+_Replace "pradipbabar/resource-master" with the actual path to your submodules or use the appropriate Terraform registry paths._
