@@ -12,13 +12,16 @@ Before you begin, ensure that you have the following prerequisites set up:
 
 ## Usage
 
-### 1. Clone the Repository
+### 1. Simple usage 
+```hcl
+module "resourse_master" {
+  enable_rds = true
+  enable_vpc = true
+  enable_s3 = true
+  enable_ec2 = true
 
-Clone this repository to your local machine:
 
-```bash
-git clone https://github.com/your/repo.git
-cd repo
+}
 ```
 
 ### 2. Define Your Configuration
