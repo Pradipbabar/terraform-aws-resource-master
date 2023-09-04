@@ -1,4 +1,4 @@
-# Terraform Module: pradipbabar/resource-master/aws-rds
+# Terraform Module: pradipbabar/resource-master/rds
 
 This Terraform module deploys an Amazon RDS database instance in AWS. It includes the creation of a DB subnet group and the associated security groups. You can configure various aspects of the RDS instance, including its engine, storage, instance class, database name, username, and password.
 
@@ -6,7 +6,7 @@ This Terraform module deploys an Amazon RDS database instance in AWS. It include
 
 ```hcl
 module "my_rds_instance" {
-  source = "pradipbabar/resource-master/aws-rds"
+  source = "Pradipbabar/resource-master/aws//modules/rds"
 
   rds_identifier            = "my-db-instance"
   rds_allocated_storage     = 20

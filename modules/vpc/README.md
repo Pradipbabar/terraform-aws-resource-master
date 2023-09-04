@@ -1,4 +1,4 @@
-# Terraform Module: pradipbabar/resource-master/aws
+# Terraform Module: pradipbabar/resource-master/aws vpc
 
 This Terraform module deploys a Virtual Private Cloud (VPC) in AWS with public and private subnets. It also provisions necessary route tables, associations, NAT Gateway, Elastic IP, and an Internet Gateway. The module is designed to be reusable and configurable.
 
@@ -6,7 +6,7 @@ This Terraform module deploys a Virtual Private Cloud (VPC) in AWS with public a
 
 ```hcl
 module "my_vpc" {
-  source = "pradipbabar/resource-master/aws"
+  source = "Pradipbabar/resource-master/aws//modules/vpc"
 
   vpc_cidr_block             = "10.0.0.0/16"
   environment                = "dev"

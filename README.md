@@ -15,6 +15,7 @@ Before you begin, ensure that you have the following prerequisites set up:
 ### 1. Simple usage 
 ```hcl
 module "resourse_master" {
+  source = "Pradipbabar/resource-master/aws/"
   enable_rds = true
   enable_vpc = true
   enable_s3 = true
@@ -30,25 +31,25 @@ Create a Terraform configuration file (e.g., `main.tf`) to define your infrastru
 
 ```hcl
 module "my_vpc" {
-  source = "pradipbabar/resource-master/aws-vpc"
+  source = "Pradipbabar/resource-master/aws//modules/vpc"
 
   # VPC configuration here...
 }
 
 module "my_ec2_instances" {
-  source = "pradipbabar/resource-master/aws-ec2"
+  source = "Pradipbabar/resource-master/aws//modules/ec2"
 
   # EC2 instances configuration here...
 }
 
 module "my_rds_instance" {
-  source = "pradipbabar/resource-master/aws-rds"
+  source = "Pradipbabar/resource-master/aws//modules/rds"
 
   # RDS instance configuration here...
 }
 
 module "my_s3_bucket" {
-  source = "pradipbabar/resource-master/aws-s3"
+  source = "Pradipbabar/resource-master/aws//modules/s3"
 
   # S3 bucket configuration here...
 }
@@ -84,19 +85,19 @@ terraform destroy
 
 ## Submodules
 
-### AWS VPC (Virtual Private Cloud)
+### [AWS VPC (Virtual Private Cloud)](./modules/vpc/)
 
 The `aws-vpc` submodule creates a Virtual Private Cloud in AWS, including public and private subnets, route tables, and necessary associations.
 
-### AWS EC2 Instances
+### [AWS EC2 Instances](./modules/ec2/)
 
 The `aws-ec2` submodule deploys Amazon EC2 instances in the VPC with configurable attributes such as instance types, AMIs, security groups, and more.
 
-### AWS RDS (Relational Database Service)
+### [AWS RDS (Relational Database Service)](./modules/rds/)
 
 The `aws-rds` submodule provisions Amazon RDS database instances with customizable settings, including engine, storage, instance class, and more.
 
-### AWS S3 Buckets
+### [AWS S3 Buckets](./modules/s3/)
 
 The `aws-s3` submodule manages Amazon S3 buckets, allowing you to create primary and log buckets with various configurations.
 

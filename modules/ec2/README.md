@@ -1,4 +1,4 @@
-# Terraform Module: pradipbabar/resource-master/aws-ec2
+# Terraform Module: pradipbabar/resource-master/ec2
 
 This Terraform module deploys Amazon EC2 instances in AWS. It includes the configuration of instance types, AMI, subnets, security groups, key pairs, public IP associations, IAM profiles, user data, and more.
 
@@ -6,7 +6,7 @@ This Terraform module deploys Amazon EC2 instances in AWS. It includes the confi
 
 ```hcl
 module "my_ec2_instances" {
-  source = "pradipbabar/resource-master/aws-ec2"
+  source = "Pradipbabar/resource-master/aws//modules/ec2"
 
   ec2_count                 = 2
   instamce_type             = "t2.micro"

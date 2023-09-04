@@ -1,4 +1,4 @@
-# Terraform Module: pradipbabar/resource-master/aws-s3
+# Terraform Module: pradipbabar/resource-master/s3
 
 This Terraform module deploys an Amazon S3 bucket in AWS with configurable settings. The module allows you to create a primary S3 bucket and an optional log bucket for logging. You can customize various attributes such as ACL, versioning, tags, website configuration, CORS rules, server-side encryption, object lock configuration, and logging settings.
 
@@ -6,7 +6,7 @@ This Terraform module deploys an Amazon S3 bucket in AWS with configurable setti
 
 ```hcl
 module "my_s3_bucket" {
-  source = "pradipbabar/resource-master/aws-s3"
+  source = "Pradipbabar/resource-master/aws//modules/s3"
 
   s3_bucket_name = "my-example-bucket"
   acl            = "private"
