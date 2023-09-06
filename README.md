@@ -12,7 +12,8 @@ Before you begin, ensure that you have the following prerequisites set up:
 
 ## Usage
 
-### 1. Simple usage 
+### 1. Simple usage
+
 ```hcl
 module "resourse_master" {
   source = "Pradipbabar/resource-master/aws/"
