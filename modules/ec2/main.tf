@@ -13,7 +13,7 @@ resource "aws_instance" "web" {
   ami             = var.ami
   subnet_id       = var.subnet_id != "" ? var.subnet_id : module.vpc.public_subnet_1a_id
   security_groups = var.security_groups
-  vpc_security_group_ids = var.vpc_security_group_ids != "" ? var.vpc_security_group_ids : module.security_groups.ec2_vpc_security_groupid   # Replace with security group IDs
+  vpc_security_group_ids = var.vpc_security_group_ids != "" ? var.vpc_security_group_ids : [module.security_groups.ec2_vpc_security_groupid]   # Replace with security group IDs
   key_name              = var.key_name     # Replace with your key pair name
 
   associate_public_ip_address = var.associate_public_ip_address

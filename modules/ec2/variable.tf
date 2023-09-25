@@ -70,7 +70,7 @@ variable "ebs_optimized" {
 
 variable "root_volume_type" {
   description = "root volume type"
-  default = ""
+  default = "gp2"
 }
 variable "root_block_device_termination" {
   description = "root block device termination"
@@ -84,7 +84,7 @@ variable "ebs_name" {
 }
 variable "ebs_volume_type" {
   description = "ebs volume type"
-  default = ""
+  default = "gp2"
 }
 variable "ebs_volume_size" {
   description = "ebs volume size"
