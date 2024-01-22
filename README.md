@@ -119,5 +119,3 @@ Feel free to contribute to this Terraform infrastructure module by creating pull
 This Terraform module is open-source and available under the [MIT License](LICENSE).
 
 ---
-
-_Replace "pradipbabar/resource-master" with the actual path to your submodules or use the appropriate Terraform registry paths._
