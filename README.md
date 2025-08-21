@@ -1,121 +1,286 @@
-# Terraform Main Module: My AWS Infrastructure
+# AWS Infrastructure Terraform Module
 
-This Terraform main module orchestrates the deployment of various AWS resources by leveraging the capabilities of submodules. The main module is designed to create and manage a wide range of AWS resources, including a VPC, EC2 instances, RDS databases, Amazon S3 buckets, security groups, and more. Additionally, it uses submodules for specific resource types such as CloudWatch alarms and DynamoDB tables.
+[![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
 
-## Prerequisites
+A comprehensive, production-ready Terraform module for deploying AWS infrastructure components including VPC, EC2, RDS, S3, and other essential services.
 
-Before you begin, ensure that you have the following prerequisites set up:
+## Features
 
-- AWS account with appropriate permissions.
-- Terraform installed on your local machine.
-- AWS CLI configured with valid credentials.
+✅ **Production-Ready**: Follows Terraform and AWS best practices  
+✅ **Modular Design**: Enable/disable components as needed  
+✅ **Flexible Configuration**: Extensive customization options  
+✅ **Security-First**: Encrypted storage, private subnets, security groups  
+✅ **Cost-Optimized**: Intelligent defaults for cost efficiency  
+✅ **Well-Documented**: Comprehensive documentation and examples  
+✅ **Backward Compatible**: Supports legacy configurations  
 
-## Usage
+## Architecture
 
-### 1. Simple usage
+This module can deploy the following AWS resources:
+
+- **VPC**: Virtual Private Cloud with public/private subnets, NAT gateways, route tables
+- **EC2**: Elastic Compute instances with auto-scaling capabilities
+- **RDS**: Relational Database Service with backup and monitoring
+- **S3**: Simple Storage Service with encryption and lifecycle policies
+- **IAM**: Identity and Access Management roles and policies
+- **CloudWatch**: Monitoring and logging services
+- **DynamoDB**: NoSQL database service
+- **SNS**: Simple Notification Service
+
+## Quick Start
+
+### Basic Usage
 
 ```hcl
-module "resourse_master" {
-  source = "Pradipbabar/resource-master/aws/"
-  enable_rds = true
-  enable_vpc = true
-  enable_s3 = true
-  enable_ec2 = true
-
-
+module "aws_infrastructure" {
+  source = "Pradipbabar/resource-master/aws"
+  
+  # Basic configuration
+  name_prefix = "my-project"
+  environment = "dev"
+  
+  # Enable components
+  create_vpc = true
+  create_ec2 = true
+  create_rds = true
+  create_s3  = true
+  
+  # Common tags
+  common_tags = {
+    Project     = "MyProject"
+    Environment = "Development"
+    Owner       = "DevOps Team"
+  }
 }
 ```
 
-### 2. Define Your Configuration
-
-Create a Terraform configuration file (e.g., `main.tf`) to define your infrastructure configuration. In this file, you can specify the resources you want to create and configure.
+### Advanced Usage
 
 ```hcl
-module "my_vpc" {
-  source = "Pradipbabar/resource-master/aws//modules/vpc"
-
-  # VPC configuration here...
+module "aws_infrastructure" {
+  source = "Pradipbabar/resource-master/aws"
+  
+  name_prefix = "production-app"
+  environment = "prod"
+  
+  # VPC Configuration
+  create_vpc = true
+  vpc_config = {
+    cidr_block = "10.0.0.0/16"
+    
+    public_subnets = [
+      {
+        cidr_block        = "10.0.1.0/24"
+        availability_zone = "us-east-1a"
+      },
+      {
+        cidr_block        = "10.0.2.0/24"
+        availability_zone = "us-east-1b"
+      }
+    ]
+    
+    private_subnets = [
+      {
+        cidr_block        = "10.0.10.0/24"
+        availability_zone = "us-east-1a"
+      },
+      {
+        cidr_block        = "10.0.11.0/24"
+        availability_zone = "us-east-1b"
+      }
+    ]
+    
+    enable_nat_gateway = true
+    single_nat_gateway = false
+  }
+  
+  # EC2 Configuration
+  create_ec2 = true
+  ec2_config = {
+    instance_count = 2
+    instance_type  = "t3.medium"
+    key_name       = "my-keypair"
+    
+    root_block_device = {
+      volume_type = "gp3"
+      volume_size = 30
+      encrypted   = true
+    }
+    
+    ebs_block_devices = [
+      {
+        device_name = "/dev/sdf"
+        volume_size = 100
+        volume_type = "gp3"
+        encrypted   = true
+      }
+    ]
+    
+    user_data = base64encode(<<-EOF
+      #!/bin/bash
+      yum update -y
+      yum install -y docker
+      systemctl start docker
+      systemctl enable docker
+    EOF
+    )
+  }
+  
+  # RDS Configuration
+  create_rds = true
+  rds_config = {
+    engine         = "mysql"
+    engine_version = "8.0"
+    instance_class = "db.t3.micro"
+    
+    allocated_storage = 20
+    storage_encrypted = true
+    
+    database_name = "myapp"
+    username      = "admin"
+    
+    backup_retention_period = 7
+    multi_az               = true
+    deletion_protection    = true
+  }
+  
+  # S3 Configuration
+  create_s3 = true
+  s3_config = {
+    versioning = {
+      enabled = true
+    }
+    
+    server_side_encryption_configuration = {
+      rule = {
+        apply_server_side_encryption_by_default = {
+          sse_algorithm = "AES256"
+        }
+      }
+    }
+    
+    lifecycle_configuration = [
+      {
+        id     = "transition_to_ia"
+        status = "Enabled"
+        
+        transition = [
+          {
+            days          = 30
+            storage_class = "STANDARD_IA"
+          },
+          {
+            days          = 60
+            storage_class = "GLACIER"
+          }
+        ]
+      }
+    ]
+  }
+  
+  # Common tags
+  common_tags = {
+    Project     = "ProductionApp"
+    Environment = "Production"
+    Team        = "Platform"
+    CostCenter  = "Engineering"
+  }
 }
-
-module "my_ec2_instances" {
-  source = "Pradipbabar/resource-master/aws//modules/ec2"
-
-  # EC2 instances configuration here...
-}
-
-module "my_rds_instance" {
-  source = "Pradipbabar/resource-master/aws//modules/rds"
-
-  # RDS instance configuration here...
-}
-
-module "my_s3_bucket" {
-  source = "Pradipbabar/resource-master/aws//modules/s3"
-
-  # S3 bucket configuration here...
-}
-
-# Additional modules for CloudWatch, DynamoDB, etc.
 ```
 
-### 3. Initialize Terraform
+## Requirements
 
-Run the following command to initialize Terraform and download the required providers and modules:
+| Name | Version |
+|------|---------|
+| terraform | >= 1.0 |
+| aws | >= 5.0 |
 
-```bash
-terraform init
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | >= 5.0 |
+| random | >= 3.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| vpc | ./modules/vpc | n/a |
+| ec2 | ./modules/ec2 | n/a |
+| rds | ./modules/rds | n/a |
+| s3 | ./modules/s3 | n/a |
+| cloudwatch | ./modules/cloudwatch | n/a |
+| dynamodb | ./modules/dynamodb | n/a |
+| iam | ./modules/iam | n/a |
+| sns | ./modules/sns | n/a |
+
+## Examples
+
+### Simple Web Application
+
+```hcl
+module "web_app" {
+  source = "Pradipbabar/resource-master/aws"
+  
+  name_prefix = "webapp"
+  environment = "prod"
+  
+  create_vpc = true
+  create_ec2 = true
+  create_rds = true
+  create_s3  = true
+  
+  vpc_config = {
+    cidr_block = "10.0.0.0/16"
+    enable_nat_gateway = true
+  }
+  
+  ec2_config = {
+    instance_count = 2
+    instance_type  = "t3.small"
+    key_name       = "webapp-key"
+  }
+  
+  rds_config = {
+    engine         = "mysql"
+    instance_class = "db.t3.micro"
+    database_name  = "webapp"
+  }
+}
 ```
 
-### 4. Apply the Configuration
+## Best Practices
 
-Deploy your AWS infrastructure by running:
+### Security
 
-```bash
-terraform apply
-```
+- All storage is encrypted by default
+- Private subnets for database and application layers
+- Security groups with minimal required access
+- IAM roles with least privilege principle
 
-Terraform will show you the plan and ask for confirmation before applying the changes.
+### Cost Optimization
 
-### 5. Destroy Resources (Optional)
+- Use appropriate instance types for workload
+- Enable GP3 storage for better cost/performance ratio
+- Configure lifecycle policies for S3
+- Use single NAT gateway for non-production environments
 
-If you need to tear down the resources, you can use the following command:
+### Monitoring
 
-```bash
-terraform destroy
-```
-
-## Submodules
-
-### [AWS VPC (Virtual Private Cloud)](./modules/vpc/)
-
-The `aws-vpc` submodule creates a Virtual Private Cloud in AWS, including public and private subnets, route tables, and necessary associations.
-
-### [AWS EC2 Instances](./modules/ec2/)
-
-The `aws-ec2` submodule deploys Amazon EC2 instances in the VPC with configurable attributes such as instance types, AMIs, security groups, and more.
-
-### [AWS RDS (Relational Database Service)](./modules/rds/)
-
-The `aws-rds` submodule provisions Amazon RDS database instances with customizable settings, including engine, storage, instance class, and more.
-
-### [AWS S3 Buckets](./modules/s3/)
-
-The `aws-s3` submodule manages Amazon S3 buckets, allowing you to create primary and log buckets with various configurations.
-
-### Additional Submodules
-
-Extend the main module by adding additional submodules to create and manage resources like CloudWatch alarms, DynamoDB tables, Lambda functions, etc., according to your specific requirements.
-
-## Outputs
-
-Each submodule may have its own set of outputs that you can use in your main configuration or other submodules. Refer to the specific submodule's documentation for details on available outputs.
+- Enable CloudWatch monitoring for all resources
+- Configure log groups with appropriate retention
+- Set up CloudWatch alarms for critical metrics
 
 ## Contributing
 
-Feel free to contribute to this Terraform infrastructure module by creating pull requests, reporting issues, or suggesting improvements. Your contributions are highly appreciated!
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ## License
 
-This Terraform module is open-source and available under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Authors
+
+- **Pradip Babar** - *Initial work* - [@Pradipbabar](https://github.com/Pradipbabar)
